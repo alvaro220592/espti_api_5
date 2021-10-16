@@ -17,9 +17,8 @@ class ProductController extends Controller
     {
         if (Product::count() > 0){
             return response()->json(Product::paginate());
-        }else{
-            return response()->json(['Mensagem' => 'Nenhum produto cadastrado']);
         }
+        return response()->json(['Mensagem' => 'Nenhum produto cadastrado']);
     }
 
     /**
