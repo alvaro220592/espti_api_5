@@ -38,4 +38,7 @@ na DatabaseSeeder, vão ser chamados os seeders de usuário e produtos:
 Pra rodar:
     php artisan db:seed
 
-Continuar da aula 5
+
+aula 5: criação da api
+    As rotas serão versionadas e do tipo resource
+    Foi criado o controller de produtos dentro de uma pasta "Api" com as flags --api e --model=Models\\Product
