@@ -37,3 +37,5 @@ na DatabaseSeeder, vão ser chamados os seeders de usuário e produtos:
 
 Pra rodar:
     php artisan db:seed
+
+Continuar da aula 5
