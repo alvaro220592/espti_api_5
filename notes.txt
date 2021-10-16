@@ -1,0 +1,39 @@
+definir banco de dados ŕa utf8mb4_unicode_ci
+
+limitar o nº de caracteres do email da tabela users
+
+criar model Models\\Product com -m
+
+definiir o $fillable
+
+editar a migration
+
+dar migrate
+
+criar seeder de usuario: php artisan make:seeder UsersTableSeeder
+
+criar seeder de produtos: php artisan make:seeder ProductsTableSeeder
+
+O usuario var ser criado na seeder. A senha nao foi configurada com hash e sim : "'password' => bcrypt('12345678'),"
+
+Produtos foram cadastrados por factory: php artisan make:factory Productfactory --model=Product
+    dentro da factory:
+        $factory->define(App\Models\Product::class, function (Faker $faker) {
+            return [
+                'name' => $faker->unique()->word(),
+                'description' => $faker->sentence()
+            ];
+        });
+
+Na seeder de produtos, foi chamada a factory:
+    public function run()
+    {
+        factory(App\Models\Product::class, 20)->create();
+    }
+
+na DatabaseSeeder, vão ser chamados os seeders de usuário e produtos:
+    $this->call(UsersTableSeeder::class);
+    $this->call(ProductsTableSeeder::class);
+
+Pra rodar:
+    php artisan db:seed
