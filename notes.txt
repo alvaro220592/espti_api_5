@@ -42,3 +42,43 @@ Pra rodar:
 aula 5: criação da api
     As rotas serão versionadas e do tipo resource
     Foi criado o controller de produtos dentro de uma pasta "Api" com as flags --api e --model=Models\\Product
+
+    no controller foi instanciada a model Product no construtor pra nao precisar instanciar em todos os métodos:
+
+    private $product;
+    
+    public function __construct(Product $product)
+    {   
+        $this->product = $product;
+    }
+
+    daí pra frente, sempre se refere a ela como "$this->product"
+
+aula 7 - cadastrar e validar:
+    
+    model Product:
+    public function rules($id = ''){
+        return [
+            'name' => ['required','min:3','max:100','unique:products','{id}','id'],
+            'description' => ['required','min:10', 'max:1000']
+        ];
+    }
+
+    Controller:
+
+    public function store(Request $request)
+    {
+        $validate = validator($request->all(), $this->product->rules());
+
+        if($validate->fails()){
+            return response()->json($validate->messages());
+        }
+
+        if (! $this->product->create($request->all()))
+            return response()->json(['Erro' => 'Erro ao cadastrar'], 500);
+        
+        return response()->json([
+            'Mensagem' => 'Cadastro realizado com sucesso',
+            'Dados' => $request->all()
+        ]);
+    }

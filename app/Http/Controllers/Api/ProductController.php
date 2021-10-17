@@ -8,6 +8,13 @@ use App\Http\Controllers\Controller;
 
 class ProductController extends Controller
 {
+    private $product;
+
+    public function __construct(Product $product)
+    {   
+        $this->product = $product;
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -15,8 +22,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        if (Product::count() > 0){
-            return response()->json(Product::paginate());
+        if ($this->product->count() > 0){
+            return response()->json($this->product->paginate());
         }
         return response()->json(['Mensagem' => 'Nenhum produto cadastrado']);
     }
@@ -29,7 +36,19 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validate = validator($request->all(), $this->product->rules());
+
+        if($validate->fails()){
+            return response()->json($validate->messages());
+        }
+
+        if (! $this->product->create($request->all()))
+            return response()->json(['Erro' => 'Erro ao cadastrar'], 500);
+        
+        return response()->json([
+            'Mensagem' => 'Cadastro realizado com sucesso',
+            'Dados' => $request->all()
+        ]);
     }
 
     /**

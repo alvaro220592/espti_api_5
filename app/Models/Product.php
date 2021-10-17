@@ -7,4 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     protected $fillable = ['name', 'description'];
+
+    public function rules($id = ''){
+        return [
+            'name' => ['required','min:3','max:100','unique:products','{id}','id'],
+            'description' => ['required','min:10', 'max:1000']
+        ];
+    }
 }
