@@ -10,8 +10,8 @@ class Product extends Model
 
     public function rules($id = ''){
         return [
-            'name' => ['required','min:3','max:100','unique:products','{id}','id'],
-            'description' => ['required','min:10', 'max:1000']
+            'name' => "required|min:3|max:100|unique:products,name,{$id},id",
+            'description' => 'required|min:10|max:1000'
         ];
     }
 }

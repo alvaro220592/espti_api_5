@@ -57,9 +57,11 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function show(Product $product)
+    public function show($id)
     {
-        //
+        if(! $this->product = Product::find($id))
+            return response()->json(['Mensagem' => 'Produto não encontrado']);
+        return response()->json(['Produtos' => $this->product]);
     }
 
     /**
@@ -69,9 +71,25 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, $id)
     {
-        //
+        $product = $this->product->find($id);
+
+        // verificando se existe o produto com o id informado
+        if(! $product)
+            return response()->json(['Mensagem' => 'Produto não encontrado']);
+
+        $validacao = validator($request->all(), $product->rules($id));
+
+        if($validacao->fails())
+            return response()->json(['Erro' => $validacao->messages()]);
+
+        if(! $product->update($request->all()))
+            return response()->json(['Erro' => 'Erro ao alterar'], 500);
+        return response()->json([
+            'Mensagem' => 'Dados alterados com sucesso',
+            'Produto' => $product
+        ]);
     }
 
     /**
