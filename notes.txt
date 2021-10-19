@@ -114,3 +114,51 @@ aula 9 - alterar e validar
             'Produto' => $product
         ]);
     }
+
+aula 10 - deletando:
+    public function destroy($id)
+    {
+        if (! $produto = $this->product->find($id))
+            return response()->json(['Mensagem' => 'Produto não encontrado']);
+
+        if (! $produto->delete())
+            return response()->json(['Erro' => 'Erro ao excluir']);
+        return response()->json([
+            'Mensagem' => 'Produto excluído com sucesso',
+            'Produto' => $produto
+        ]);
+    }
+
+aula 11- versionamento de api - já está versionada desde o começo
+
+aula 12 - limite de requisições
+    em app/http/kernel tem uma parte chamada 'api' que tem o throttle, onde consta o  numero de requisições e o numero em minutos. Tantas requisições por minuto
+
+aula 13 - paginar e pesquisar.
+    A paginação já foi feita. Falta o search
+    foi criada uma rota e um método pra search
+
+    model:
+        public function ruleSearch(){
+            return [
+                'busca' => 'required'
+            ];
+        }
+
+        public function search($data){
+
+            return $this->where('name', 'like', "%{$data['busca']}%")
+                        ->orWhere('description', 'like', "%{$data['busca']}%")
+                        ->paginate(10);
+        }
+
+    Controller:
+        public function search(Request $request){
+        $data = $request->all();
+
+        $validacao = validator($data, $this->product->ruleSearch());
+        if ($validacao->fails())
+            return response()->json(['Erro' => $validacao->messages()]);
+        
+        return response()->json(['Resultado' => $this->product->search($data)]);
+    }

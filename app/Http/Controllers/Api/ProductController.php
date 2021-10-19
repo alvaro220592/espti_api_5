@@ -98,8 +98,26 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        //
+        if (! $produto = $this->product->find($id))
+            return response()->json(['Mensagem' => 'Produto não encontrado']);
+
+        if (! $produto->delete())
+            return response()->json(['Erro' => 'Erro ao excluir']);
+        return response()->json([
+            'Mensagem' => 'Produto excluído com sucesso',
+            'Produto' => $produto
+        ]);
+    }
+
+    public function search(Request $request){
+        $data = $request->all();
+
+        $validacao = validator($data, $this->product->ruleSearch());
+        if ($validacao->fails())
+            return response()->json(['Erro' => $validacao->messages()]);
+        
+        return response()->json(['Resultado' => $this->product->search($data)]);
     }
 }

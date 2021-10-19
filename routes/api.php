@@ -5,4 +5,5 @@ use Illuminate\Http\Request;
 
 Route::group(['prefix' => 'v1'], function(){
     Route::resource('products', 'Api\ProductController');
+    Route::post('products/search/', 'Api\ProductController@search');
 });
