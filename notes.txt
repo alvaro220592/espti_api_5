@@ -162,3 +162,47 @@ aula 13 - paginar e pesquisar.
         
         return response()->json(['Resultado' => $this->product->search($data)]);
     }
+
+
+AULA: 14 - CONFIGURAR O JWT
+
+    Link: https://github.com/tymondesigns/jwt-auth
+
+    clica no wiki(https://github.com/tymondesigns/jwt-auth/wiki). Nele tem a documentação de instalação
+
+    Em Installation
+        copia o "tymon/jwt-auth": "0.5.*" pra colar no "require" do composer.json
+        roda no terminal 'composer update'
+        adiciona 'Tymon\JWTAuth\Providers\JWTAuthServiceProvider' no array 'providers' em config/app.php.
+        no mesmo arquivo, no array 'aliases', cola 'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
+        No mesmo array, cola 'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
+        publica o vendor: $ php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\JWTAuthServiceProvider". Ele cria um arquivo chamado jwt.php em config/
+        No arquivo jwt.php tem um 'secret' que abriga uma chave de segurança pra gerar tokens
+        'ttl' é o tempo em minutos, de validade do token
+        'refresh_ttl' é o tempo em minutos depois que o token é atualizado
+        'algo' é o tipo de hash que ele usa
+        'user' abriga a model que ele usa
+        'identifier' é o identificador da tabela, no caso, o id
+        para criar um novo token, vai no terminal e põe 'php artisan jwt:generate'
+        O padrão no laravel é pegar esse token criado e colocar lá no .env. Aí no jwt.php fica assim: "'secret' => env('JWT_SECRET', ''),"
+        Nesse projeto deu o seguinte erro ao gerar o token:
+            php artisan jwt:generate ReflectionException : Method Tymon\JWTAuth\Commands\JWTGenerateCommand::handle() does not exist
+        
+        em '/vendor/tymon/jwt-auth/src/Commands/JWTGenerateCommand.php' alterei o nome da função 'fire' para 'handle' e funcionou
+
+        configurando o middleware do jwt:
+            em app/http/kernel.php, protected $routeMiddleware, adiciona:
+                'jwt.auth' => \Tymon\JWTAuth\Middleware\GetUserFromToken::class,
+        
+        altera as rotas envolvendo elas num novo grupo de autenticação:
+            Route::group(['prefix' => 'v1'], function(){
+                Route::group(['middleware' => 'jwt.auth'], function(){
+                    Route::resource('products', 'Api\ProductController');
+                    Route::post('products/search/', 'Api\ProductController@search');
+                });
+            });
+
+        Ao rodar uma requisição, retorna o seguinte:
+        {
+            "error": "token_not_provided"
+        }
