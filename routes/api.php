@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 $this->group(['prefix' => 'v1'], function(){
 
     $this->post('auth', 'Auth\AuthApiController@authenticate');
+    $this->get('auth-refresh', 'Auth\AuthApiController@refreshToken');
 
     $this->group(['middleware' => 'jwt.auth'], function(){
         $this->resource('products', 'Api\ProductController');

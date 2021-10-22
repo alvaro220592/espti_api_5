@@ -251,3 +251,14 @@ aula 15: creating tokens
     depois de enviar a requisição, retorna um token pra colar no header das requisições
     O header fica assim:
     | Authorization | Bearer <coleOTokenAqui> |
+
+aula 16 - refresh token
+    é uma renovação do token. de início ele vem configurado pra durar 60 minutos (config/jwt.php). Quando dá refresh, passa a durar 20160 minutos
+    Pra isso foi criada uma funçao (refreshToken) lá no controller de autenticação.
+    Quando der 'token expired', manda chamar o método criado.
+    Foi criada uma rota chamada auth-refresh
+    Se for feita uma requisição com o token antigo no header, vai reclamar 'token expired'. É aí que entra a rota criada pra chamar o controller de refresh
+    Pra renovar o token, tem q passar ele na url. Se for no header, nao aceita:
+    "localhost:8000/api/v1/auth-refresh?token=eyJ0eXAi..."
+    O cara da especializati fez a rota como post. Eu fiz GET, já q é pra pegar algo pela url.
+    Estava fazendo pelo Insomnia mas começou a dar problema e mudei pro postman
