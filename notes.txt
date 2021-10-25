@@ -262,3 +262,24 @@ aula 16 - refresh token
     "localhost:8000/api/v1/auth-refresh?token=eyJ0eXAi..."
     O cara da especializati fez a rota como post. Eu fiz GET, já q é pra pegar algo pela url.
     Estava fazendo pelo Insomnia mas começou a dar problema e mudei pro postman
+
+aula 17 - consumindo webservice de aplicação externa
+    foi criado um projeto em /home/alvaro/Documentos/cursos/js/ajax-fetch/consumindo_espiti_api_5/ pra consumir esta api
+
+    Tem que configurar o cors pra não dar erro:
+
+        https://github.com/barryvdh/laravel-cors
+
+        roda no terminal:
+            composer remove barryvdh/laravel-cors fruitcake/laravel-cors
+            composer require fruitcake/laravel-cors
+        
+        Adiciona o middleware em app/Http/kernel.php:
+            \Fruitcake\Cors\HandleCors::class,
+
+        Publicar o vendor:
+            php artisan vendor:publish --tag="cors"
+
+        em config/cors.php:
+            'paths' => ['api/*'],
+
