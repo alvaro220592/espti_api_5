@@ -283,3 +283,35 @@ aula 17 - consumindo webservice de aplicação externa
         em config/cors.php:
             'paths' => ['api/*'],
 
+aula 18 - tratamento de status code e excessões
+    quando acontece qualquer operação, a aplicação retorna um status code e nem sempre está certo. no site "https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html" constam os status codes pra cada situação.
+    Os mais comuns:
+        200 - ok
+        201 - created
+        202 - accepted
+        400 - bad request
+        401 - unauthorized
+        404 - not found
+        500 - Internal Server Error
+    
+    Esses status são colocados na response da request que você quer
+
+    Tratamento de excessões:
+        NotFoundHttpException(quando coloca algo nada a ver na url)
+            em app/Exceptions/handler.php, na função render, tem que verificar se a excessão referida na função é uma instância da NotFoundHttpException. Se for, pede a response()->json() que quiser(TEM QUE IMPORTAR AS EXCESSÕES):
+
+            public function render($request, Exception $exception)
+            {
+                if($exception instanceof NotFoundHttpException)
+                    return response()->json([
+                            'Erro' => 'Não encontrado',
+                            'Exception' => "NotFoundHttpException"
+                        ], 404);
+                    
+                return parent::render($request, $exception);
+            }
+
+        MethodNotAllowedException(quando por exemplo, faz a requisição com o verbo errado):
+            elseif($exception instanceof MethodNotAllowedHttpException)
+            return response()->json(['Erro' => 'Verbo http incorreto', 'verbo usado' => $request->method()], 405);
+

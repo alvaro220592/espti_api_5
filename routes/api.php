@@ -10,6 +10,6 @@ $this->group(['prefix' => 'v1'], function(){
 
     $this->group(['middleware' => 'jwt.auth'], function(){
         $this->resource('products', 'Api\ProductController');
-        $this->post('products/search/', 'Api\ProductController@search');
+        $this->get('products/search/', 'Api\ProductController@search');
     });
 });
