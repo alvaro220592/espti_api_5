@@ -315,3 +315,129 @@ aula 18 - tratamento de status code e excessões
             elseif($exception instanceof MethodNotAllowedHttpException)
             return response()->json(['Erro' => 'Verbo http incorreto', 'verbo usado' => $request->method()], 405);
 
+
+
+========APLICAÇÃO EXTERNA CONSUMINDO WEB SERVICE=============
+aula 2 - configurando php e autoload.
+    foi criado o projeto php puro externo e pelo terminal foi iniciado o composer "composer init".
+        o nome do pacote foi o sugerido pelo composer
+        o autor foi o sugerido
+        min stability - só deu enter
+        tipo de pacote - só enter
+        licença - só enter
+        dependencia - enter
+        search package - enter
+        dependencia require-dev - enter
+        confirmação - enter
+        vendor no gitignore? - enter pra yes
+
+    no terminal foi dado o composer update
+    foi criada a estrutura:
+
+    app
+        Controllers
+            ApiController.php
+            Login.php
+    public
+        index.php
+    vendor
+    .gitignore
+        vendor
+    composer.json
+    composer.lock
+
+    Códigos:
+        ApiController.php:
+            <?php
+
+            namespace App\Controllers;
+
+            class ApiController {
+                public function index($token){
+                    $url = "localhost:8000/api/v1/products";
+                    $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvdjEvYXV0aCIsImlhdCI6MTYzNTcyMDY3NiwiZXhwIjoxNjM1NzI0Mjc2LCJuYmYiOjE2MzU3MjA2NzYsImp0aSI6ImtnTnM3RldYUVpxR3hCT0MifQ.3I5yo7KHYnlV5OSFV-_xxj_2cxK8EvnL4E6Q_htBwxA";
+
+                    $ch = curl_init();
+
+                    curl_setopt_array($ch, [
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_CUSTOMREQUEST => "GET",
+                        CURLOPT_URL => $url,
+                        CURLOPT_HTTPHEADER => [
+                            "Authorization: Bearer $token"
+                        ]
+                    ]);
+
+                    $response = json_decode(curl_exec($ch));
+                    curl_close($ch);
+
+                    return $response->data;
+                }
+            }
+
+        Login.php:
+            <?php
+
+            namespace App\Controllers;
+
+            class Login {
+                public function login(){
+
+                    $url = "localhost:8000/api/v1/auth";
+                    $email = "alvaro220592@gmail.com";
+                    $senha = "12345678";
+
+                    $ch = curl_init();
+
+                    curl_setopt_array($ch, [
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_CUSTOMREQUEST => "POST",
+                        CURLOPT_POSTFIELDS => [
+                            "email" => $email,
+                            "password" => $senha
+                        ],
+                        CURLOPT_URL => $url
+                    ]);
+
+                    $response = json_decode(curl_exec($ch));
+                    curl_close($ch);
+
+                    return $response->token;
+                }
+            }
+
+        index.php:
+            <?php
+
+            use App\Controllers\Login;
+            use App\Controllers\ApiController;
+
+            require "../vendor/autoload.php";
+
+            $login = new Login;
+
+            //echo "Token:<br>{$login->login()}";
+
+            $api = new ApiController;
+
+            echo "<pre>";
+            var_dump($api->index($login->login()));
+
+        no composer.json:
+        {
+            "name": "alvaro/espti_api_php_externo",
+            "description": "consome a api espti_api_5",
+            "authors": [
+                {
+                    "name": "alvaro220592",
+                    "email": "alvaro220592@gmail.com"
+                }
+            ],
+            "require": {},
+            "autoload":{
+                "psr-4":{
+                    "App\\": "app",
+                    "App\\Controllers\\": "app/Controllers"
+                }
+            }
+        }
