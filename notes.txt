@@ -441,3 +441,4 @@ aula 2 - configurando php e autoload.
                 }
             }
         }
+.
