@@ -441,4 +441,36 @@ aula 2 - configurando php e autoload.
                 }
             }
         }
-.
+
+=====================================
+APLICAÇÃO LARAVEL CONSUMINDO API EXTERNA
+=====================================
+
+aula 1
+	foi criado o projeto laravel chamado espti_api_5_laravel_client e o timezone dele foi mudado
+
+aula 2 - utilizando o guzzle no laravel
+
+	LINKs:
+	Download Pacote: https://github.com/guzzle/guzzle
+
+	Documentação: http://docs.guzzlephp.org/en/stable/
+
+
+
+	Instalar Pacote no Laravel, comando: composer require guzzlehttp/guzzle
+
+	'composer update'
+
+	pra rodar o guzzle, precisa instanciar a classe dele: $client = new Guzzle\Client(['base_uri => 'http://httpbin.org']);
+	antes de rodar, criei um controller 'ProductController' tipo --api
+	criei a rota resource
+	no controller, importei o guzzle assim: 'use GuzzleHttp\Client as Guzzle;'
+	no .env criei uma variavel com a url da api pra ser só chamada no projeto, o email e a senha pro login
+
+parei no 11:58
+
+
+
+
+
