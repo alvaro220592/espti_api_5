@@ -462,13 +462,28 @@ aula 2 - utilizando o guzzle no laravel
 
 	'composer update'
 
-	pra rodar o guzzle, precisa instanciar a classe dele: $client = new Guzzle\Client(['base_uri => 'http://httpbin.org']);
+	pra rodar o guzzle, precisa instanciar a classe dele: $client = new Guzzle\Client;
 	antes de rodar, criei um controller 'ProductController' tipo --api
 	criei a rota resource
 	no controller, importei o guzzle assim: 'use GuzzleHttp\Client as Guzzle;'
 	no .env criei uma variavel com a url da api pra ser só chamada no projeto, o email e a senha pro login
 
-parei no 11:58
+    o login, ficou na função index(?).
+    public function index()
+    {
+        try {
+            $client = new Guzzle;
+            $response = $client->request('POST', env('API_URL').'auth', [
+                'form_params' => [
+                    'email' => env('API_EMAIL'),
+                    'password' => env('API_SENHA')
+                ]
+            ]);
+            dd(json_decode($response->getBody())->token);
+        } catch (GuzzleException $e) {
+            dd($e);
+        } 
+    }
 
 
 
