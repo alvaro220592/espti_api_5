@@ -485,7 +485,87 @@ aula 2 - utilizando o guzzle no laravel
         } 
     }
 
+aula 4 - laravel comunicando com api externa
+	ele colocou o conteúdo do login numa model chamada AuthApi
+
+model:
+class AuthApi extends Model
+{
+    use HasFactory;
+
+    private $token;
+
+    public function __construct()
+    {
+        try {
+            $client = new Guzzle;
+            $response = $client->request('POST', env('API_URL').'auth', [
+                'form_params' => [
+                    'email' => env('API_EMAIL'),
+                    'password' => env('API_SENHA')
+                ]
+            ]);
+            $this->token = json_decode($response->getBody())->token;
+        } catch (GuzzleException $e) {
+            dd($e);
+        } 
+    }
+
+    public function getToken(){
+        return $this->token;
+    }
+}
+
+Controller:
+	private $token;
+
+    public function __construct()
+    {
+        $auth = new AuthApi;
+        $this->token = $auth->getToken();
+    }
+
+	public function index()
+    {
+        /* $auth = new AuthApi;
+        $this->token = $auth->getToken(); */
+
+        $guzzle = new Guzzle;
+
+        $produtos = $guzzle->get(env('API_URL').'products', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->token
+            ]
+        ]);
+
+        $produtos = json_decode($produtos->getBody());
+
+        foreach($produtos->data as $produto){
+            echo "$produto->name<br>";
+        }
+        //dd(json_decode($produtos->getBody())->data);
+    }
 
 
+aula 5 - listando os produtos
+	foi incrementada a função index do controller pra mandar a variavel de produtos pra views.testesApi.produtos.index. Foi feito um layout main e a exibição dos produtos ficou numa tabela na index q extende o layout.
+método index:
+	public function index()
+    {
+        /* $auth = new AuthApi;
+        $this->token = $auth->getToken(); */
 
+        $guzzle = new Guzzle;
 
+        $produtos = $guzzle->get(env('API_URL').'products', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->token
+            ]
+        ]);
+
+        $produtos = json_decode($produtos->getBody());
+
+        return view('testesApi.produtos.index', 
+            compact('produtos')
+        );
+    }
